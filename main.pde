@@ -1,20 +1,26 @@
-
 Stage currentStage;
+PApplet app;
 abstract class Stage implements Drawable, Updateble, Setupable { 
   ArrayList<Drawable> drawables;
   ArrayList<Updateble> updatebles;
-  ArrayList<Setupable> s;
+  ArrayList<Setupable> setupables;
   public void draw() {
     for (Drawable dr : drawables) {
       dr.draw();
     }
   }
   public void setup() {
-    s = new ArrayList<Setupable>();
+    setupables = new ArrayList<Setupable>();
     updatebles = new ArrayList<Updateble>();
     drawables = new ArrayList<Drawable>();
+    for (Setupable sb : setupables) {
+      sb.setup();
+    }
   }
   public int update() {
+    int tmp = millis();
+    deltaTime = (tmp - time) / 1000f;
+    time = tmp;
     for (Updateble up : updatebles) {
       if (up.update()==1) {
         updatebles.remove(up);
@@ -22,7 +28,10 @@ abstract class Stage implements Drawable, Updateble, Setupable {
     }
     return 0;
   }
-  
+  public void keyPressed() {
+  }
+  public void keyReleased() {
+  }
   abstract public void onChange();
 }
 interface Drawable {
@@ -40,31 +49,42 @@ interface Setupable {
 }
 
 public void changeStage(Stage stage) {
-    if (currentStage!=null) {
-      currentStage.onChange();
-    }
-    currentStage = stage;
-    currentStage.setup();
+  if (currentStage!=null) {
+    currentStage.onChange();
+  }
+  currentStage = stage;
+  currentStage.setup();
 }
 void setup() {
+  app = this;
   loadRes();
   changeStage(new MainMenuStage());
 }
-void update() {
-  currentStage.update();
-}
+
+int time;
+float deltaTime;
+
 void draw() {
   currentStage.draw();
 }
 void settings() {
-  size(480,640);
+  size(360, 640);
 }
 void loadRes() {
   initSizes();
   bg = loadImage("bg.jpg");
-  bg.resize(width,height);
+  bg.resize(width, height);
   mainMenu_playButton = loadImage("MainMenu_playButton.png");
-  mainMenu_playButton.resize(mainMenu_playButton_Size,mainMenu_playButton_Size);
+  mainMenu_playButton.resize(mainMenu_playButton_Size, mainMenu_playButton_Size);
   mainMenu_snakeLogo = loadImage("SnakeLogo.png");
-  mainMenu_snakeLogo.resize(mainMenu_snakeLogoSize,mainMenu_snakeLogo.height / mainMenu_snakeLogo.width * mainMenu_snakeLogoSize);
+  mainMenu_snakeLogo.resize(mainMenu_snakeLogoSize, mainMenu_snakeLogo.height / mainMenu_snakeLogo.width * mainMenu_snakeLogoSize);
+}
+void keyPressed() {
+  currentStage.keyPressed();
+}
+void keyReleased() {
+  currentStage.keyReleased();
+}
+void movieEvent(Movie m) {
+  m.read();
 }
