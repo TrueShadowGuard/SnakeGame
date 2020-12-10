@@ -40,7 +40,7 @@ class MainMenuStage extends Stage {
         return 0;
       }
     };
-    drawables.add(new MyMovie(app,"bg.mov",0,0));
+    drawables.add(new MyMovie(app, "bg1.mp4", 0, 0));
     drawables.add(playButton);
     updatebles.add(playButton);
 

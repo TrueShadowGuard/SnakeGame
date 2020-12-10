@@ -1,4 +1,5 @@
-class GameStage extends Stage {
+PImage gameStage_heroTexture;
+class GameStage extends Stage { 
   Hero hero;
   @Override
     public void setup() {
@@ -24,16 +25,16 @@ class GameStage extends Stage {
   }
   @Override
     public void keyPressed() {
-      print(key);
+    print(key);
     switch(key) {
     case 'w':
     case 'W':    
-    hero.up = true;
+      hero.up = true;
       break;
 
     case 's':
     case 'S':
-    hero.down = true;
+      hero.down = true;
       break;
 
     case 'a':
@@ -43,23 +44,25 @@ class GameStage extends Stage {
 
     case 'd':
     case 'D':
-    hero.right = true;
+      hero.right = true;
       break;
     }
   }
   @Override
     public void keyReleased() {
-      println("released");
-       switch(key) {
+    println("released");
+    switch(key) {
     case 'w':
     case 'W': 
-    hero.up = false;
-   
+      if(!hero.inFlight) {
+        hero.dy = 100;
+      }
+      
       break;
 
     case 's':
     case 'S':
-    hero.down = false;
+      hero.down = false;
       break;
 
     case 'a':
@@ -69,51 +72,56 @@ class GameStage extends Stage {
 
     case 'd':
     case 'D':
-    hero.right = false;
+      hero.right = false;
       break;
     }
   }
 }
 
 class Hero implements Drawable, Updateble {
-  float x, y;
+  float x, y, dy;
+
   boolean up;
   boolean down;
   boolean right;
-  boolean left;
+  boolean left;  
+  boolean inFlight;
   @Override
-    public int update() {    
-      move();
+    public int update() { 
+    if(inFlight) {
+      y += dy * deltaTime;
+      dy += gameStage_gravity * deltaTime;
+      if(y > height) {
+        inFlight = false;    
+        y = height;
+      }
+    }
+    move();
     return 0;
   }
 
   @Override
     public void draw() {
     pushStyle();
-    rectMode(CENTER);
-    rect(x, y, 100, 100);
+    imageMode(CENTER);
+    image(gameStage_heroTexture, x, y);
     popStyle();
   }
   public void move() {
-    if(up^down) {
-      if(down) {      
-        if(y < height - gameStage_hero_size / 2) {
-        y += deltaTime * 1000;
-        }
-      } else {
-        if(y > 0 + gameStage_hero_size / 2) {
-        y -= deltaTime * 1000;
-        }
-      }
+    // ONE OF THE UP AND DOWN IS TRUE -> TRUE
+    if(up) {
+      dy = -1000;
+      up = false;
+      inFlight = true;
     }
-    if(left^right) {
-      if(right) {
-        if(x < width - gameStage_hero_size / 2) {
-        x += deltaTime * 1000;
+    if (left^right) {
+      if (right) {
+        if (x < width - gameStage_hero_size / 2) {
+          x += deltaTime * 1000;
         }
       } else {
-        if(x > 0 + gameStage_hero_size / 2) {
-        x -= deltaTime * 1000;
+        if (x > 0 + gameStage_hero_size / 2) {
+          x -= deltaTime * 1000;
         }
       }
     }

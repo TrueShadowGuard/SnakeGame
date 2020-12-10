@@ -6,7 +6,8 @@ public boolean rectCollidesMouse(float x, float y, float w, float h,int RECT_TYP
   }
   return false;
 }
-
+int a;
+int b;
 class MyMovie extends Movie implements Drawable {
   int x, y, w, h;
   public MyMovie(PApplet a, String s, int x, int y) {
@@ -17,10 +18,10 @@ class MyMovie extends Movie implements Drawable {
     print("w = " + w + "h = " + h);
   }
   @Override
-    public void draw() {   
-      //print(mainMenu_bgWidth + " ");
-      //println(mainMenu_bgHeight);
-      // Works only with 0, 0 ??? 
-      image(this, 0, 0);      
+    public void draw() {        
+      pushStyle();
+      imageMode(CORNER);     
+      image(this, 0, 0, a, b);
+      popStyle();
   }
 }
